@@ -31,16 +31,16 @@ In fact, I think I might _prefer_ not to be credited (haha), but I'll leave it u
 3. Start the server:
    - Development: `./llm_adapter.py`
    - "Production": `./start.sh` (to run on `localhost:5000`) or `./start.sh HOST:PORT` (to run on `HOST:PORT`)
-4. Log in to the Cody web application on your Sourcegraph instance, then use your browser's dev tools (or an extension) to grab the value of the `sgs` cookie.
+4. Log in to the Cody web application on your Sourcegraph instance, then either generate an API token (the token starts with `sgp_`) or use your browser's dev tools (or an extension) to grab the value of the `sgs` session cookie.
 5. In whatever program or library you're using to access the API:
    - Set the OpenAI API base url to the host and port the adapter is running on.
-   - Set the OpenAI API key to the value of the `sgs` cookie you obtained earlier.
+   - Set the OpenAI API key to the value of the `sgp_` API token or `sgs` session cookie you obtained earlier.
 6. Have fun!
 
 
 ## To do (or not to do)
 
-- [ ] Authorize using Sourcegraph access tokens instead of grabbing the cookie from the browser (apparently the Cody CLI tool and editor extensions auth to the Cody API using access tokens).
+- [x] Authorize using Sourcegraph access tokens instead of grabbing the cookie from the browser (apparently the Cody CLI tool and editor extensions auth to the Cody API using access tokens).
 - [ ] Add more complete support for the OpenAI-compatible API.
 - [ ] Add better error handling in the stream endpoint (can we send along the status codes from the Cody API to the client?).
 - [ ] Generally make the code not terrible.

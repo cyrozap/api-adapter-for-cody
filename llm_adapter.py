@@ -48,11 +48,19 @@ HEADERS_TEMPLATE: dict[str, str] = {
 
 
 def process_auth_token(request, headers: dict[str, str]) -> None:
-    auth_token: str = request.headers.get("Authorization", "").strip()
-    if not auth_token.startswith("Bearer "):
+    auth_header: str = request.headers.get("Authorization", "").strip()
+    if not auth_header.startswith("Bearer "):
         return
 
-    headers["cookie"] = "sgs={};".format(auth_token.split()[1])
+    auth_token: str = auth_header.split()[1]
+
+    # Use token auth if it's an API token
+    if auth_token.startswith("sgp_"):
+        headers["Authorization"] = "token {}".format(auth_token)
+        return
+
+    # Otherwise, assume it's a session token
+    headers["cookie"] = "sgs={};".format(auth_token)
 
 def transform_messages(messages: list[dict[str, str]]) -> list[dict[str, str]]:
     transformed_messages: list[dict[str, str]] = []
