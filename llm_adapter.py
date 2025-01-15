@@ -251,7 +251,7 @@ def chat_completions() -> Response:
 
 @APP.route("/v1/models", methods=["GET"])
 def list_models() -> Response:
-    headers = HEADERS_TEMPLATE.copy()
+    headers: dict[str, str] = HEADERS_TEMPLATE.copy()
 
     auth_token: str = request.headers.get("Authorization", "").strip()
     if auth_token.startswith("Bearer "):
