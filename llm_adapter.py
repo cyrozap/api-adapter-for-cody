@@ -47,6 +47,13 @@ HEADERS_TEMPLATE: dict[str, str] = {
 }
 
 
+def process_auth_token(request, headers: dict[str, str]) -> None:
+    auth_token: str = request.headers.get("Authorization", "").strip()
+    if not auth_token.startswith("Bearer "):
+        return
+
+    headers["cookie"] = "sgs={};".format(auth_token.split()[1])
+
 def transform_messages(messages: list[dict[str, str]]) -> list[dict[str, str]]:
     transformed_messages: list[dict[str, str]] = []
     for msg in messages:
@@ -70,10 +77,7 @@ def transform_messages(messages: list[dict[str, str]]) -> list[dict[str, str]]:
 @APP.route("/v1/chat/completions", methods=["POST"])
 def chat_completions() -> Response:
     headers: dict[str, str] = HEADERS_TEMPLATE.copy()
-
-    auth_token: str = request.headers.get("Authorization", "").strip()
-    if auth_token.startswith("Bearer "):
-        headers["cookie"] = "sgs={};".format(auth_token.split()[1])
+    process_auth_token(request, headers)
 
     request_data: dict[str, Any] = request.get_json()
 
@@ -252,10 +256,7 @@ def chat_completions() -> Response:
 @APP.route("/v1/models", methods=["GET"])
 def list_models() -> Response:
     headers: dict[str, str] = HEADERS_TEMPLATE.copy()
-
-    auth_token: str = request.headers.get("Authorization", "").strip()
-    if auth_token.startswith("Bearer "):
-        headers["cookie"] = "sgs={};".format(auth_token.split()[1])
+    process_auth_token(request, headers)
 
     response: requests.Response = requests.get(MODEL_CONFIG_URL, headers=headers)
 
